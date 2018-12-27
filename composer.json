@@ -18,7 +18,7 @@
       "symfony/framework-bundle": "*",
       "symfony/orm-pack": "*",
       "symfony/security-bundle": "*",
-      "symfony/serializer-pack": "*",
+      "symfony/serializer-pack": "*"
     },
     "authors": [
         {
