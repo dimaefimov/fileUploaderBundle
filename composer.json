@@ -1,5 +1,5 @@
 {
-    "name": "photobank/fileu-uploader-bundle",
+    "name": "photobank/file-uploader-bundle",
     "description": "File uploading component implementing resumable js backend for symfony 4+",
     "type": "library",
     "autoload": {

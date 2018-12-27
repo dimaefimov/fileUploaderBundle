@@ -11,7 +11,7 @@ class FileUploaderControllerTest extends BaseTest
 
   public function testTest()
   {
-    
+    var_dump($this->getUploadParameters());
   }
 
   public function testUpload()
