@@ -1,0 +1,22 @@
+parameters:
+    fileuploader.desinationdir: '/uploads/'
+    fileuploader.tempdir: '/uploads/temp/'
+    fileuploader.targeturl: '/api/upload/'
+    fileuploader.chunksize: '1*1024*1024'
+    fileuploader.simultaneousuploads: 3
+    fileuploader.allowedfiletypes: 'jpg,jpeg,png,tiff,tif,ari,dpx,arw,srf,sr2,bay,crw,cr2,dng,dcr,kdc,erf,3fr,mef,mrw,nef,nrw,orf,ptx,pef,raf,raw,rwl,dng,raw,rw2,r3d,srw,x3f'
+
+services:
+    PhotoBank\FileUploaderBundle\Controller\:
+        autowire: true
+        resource: '../../Controller'
+        tags: ['controller.service_arguments']
+
+    PhotoBank\FileUploaderBundle\Service\:
+        autowire: true
+        resource: '../../Service'
+
+    PhotoBank\FileUploaderBundle\Repository\:
+        resource: '../../Repository'
+        autowire: true
+        tags: ['doctrine.repository_service']
