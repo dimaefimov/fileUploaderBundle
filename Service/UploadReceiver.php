@@ -24,7 +24,8 @@ class UploadReceiver
       );
   }
 
-  public function testChunks($uploadParams){
+  public function testChunks($uploadParams)
+  {
     $this->uploadParams = $uploadParams;
     if(null == $uploadParams['resumablevars']['resumableIdentifier'] && trim($uploadParams['resumablevars']['resumableIdentifier'])!=''){
       $uploadParams['resumablevars']["resumableIdentifier"] = '';
@@ -36,6 +37,7 @@ class UploadReceiver
       $uploadParams['resumablevars']["resumableChunkNumber"] = '';
     }
     if (file_exists($uploadParams['tempchunkdir'].'/'.$uploadParams['filename'].$uploadParams['partstring'])) {
+      $total_files_on_server_size = $this->countFiles();
       if($total_files_on_server_size >= $this->uploadParams['resumablevars']['resumableTotalSize']){
         $this->compileFile();
       }
@@ -45,7 +47,8 @@ class UploadReceiver
     }
   }
 
-  public function uploadChunks($uploadParams){
+  public function uploadChunks($uploadParams)
+  {
     $this->uploadParams = $uploadParams;
     if (!empty($uploadParams['files'])) foreach ($uploadParams['files'] as $file) {
       if ($file->getError() != 0) {
@@ -71,24 +74,20 @@ class UploadReceiver
     return $this->response;
   }
 
-  protected function processUploadedChunk() {
-    $total_files_on_server_size = 0;
-    $temp_total = 0;
-    foreach(scandir($this->uploadParams['tempchunkdir']) as $file) {
-      $temp_total = $total_files_on_server_size;
-      $tempfilesize = filesize($this->uploadParams['tempchunkdir'].'/'.$file);
-      $total_files_on_server_size = $temp_total + $tempfilesize;
-    }
+  protected function processUploadedChunk()
+  {
+    $total_files_on_server_size = $this->countFiles();
     if ($total_files_on_server_size >= $this->uploadParams['resumablevars']['resumableTotalSize']) {
       $this->compileFile();
     }
   }
 
-  protected function compileFile(){
+  protected function compileFile()
+  {
     $filepath = $this->uploadParams['tempchunkdir'].'/'.$this->uploadParams['filename'];
     $pidfilepath = $filepath.getmypid();
     $this->fileSystem->dumpFile($pidfilepath,'');
-    for ($i=1; $i<=$this->uploadParams['resumablevars']['resumableTotalChunks']; $i++) {
+    for ($i=1; $i<=$this->uploadParams['resumablevars']['resumableTotalChunks']; $i++){
       $this->fileSystem->appendToFile($pidfilepath,file_get_contents($this->uploadParams['tempchunkdir'].'/'.$this->uploadParams['filename'].'.part'.$i));
     }
     $this->fileSystem->rename($pidfilepath, $filepath);
@@ -96,12 +95,25 @@ class UploadReceiver
     return $this->response;
   }
 
-  public function validateUpload($uploadParams){
+  public function validateUpload($uploadParams)
+  {
     $allowedFiletypes = explode(',',$this->container->getParameter('fileuploader.allowedfiletypes'));
     if(in_array(strtolower($uploadParams['extension']), $allowedFiletypes)){
       return true;
     }
     return false;
+  }
+
+  protected function countFiles()
+  {
+    $total_files_on_server_size = 0;
+    $temp_total = 0;
+    foreach(scandir($this->uploadParams['tempchunkdir']) as $file){
+      $temp_total = $total_files_on_server_size;
+      $tempfilesize = filesize($this->uploadParams['tempchunkdir'].'/'.$file);
+      $total_files_on_server_size = $temp_total + $tempfilesize;
+    }
+    return $total_files_on_server_size;
   }
 
 }
