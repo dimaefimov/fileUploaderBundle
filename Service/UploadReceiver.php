@@ -17,6 +17,7 @@ class UploadReceiver
       $this->response = array(
         'completed' => false,
         'chunk_written' => false,
+        'found' => false,
         'path' => '',
         'chunkPath' => '',
         'filename' => '',
@@ -90,7 +91,11 @@ class UploadReceiver
     for ($i=1; $i<=$this->uploadParams['resumablevars']['resumableTotalChunks']; $i++){
       $this->fileSystem->appendToFile($pidfilepath,file_get_contents($this->uploadParams['tempchunkdir'].'/'.$this->uploadParams['filename'].'.part'.$i));
     }
-    $this->fileSystem->rename($pidfilepath, $filepath);
+    if(!$this->fileSystem->exists($filepath)){
+      $this->fileSystem->rename($pidfilepath, $filepath);
+    }else{
+      $this->response['found'] = true;
+    }
     $this->response['completed'] = true;
     return $this->response;
   }

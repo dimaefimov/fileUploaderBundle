@@ -82,7 +82,13 @@ class UploadRecordManager
       ['id' => 'ASC']
     );
     foreach($uploads as $upload){
-      $uploadArr[] = array($upload->getItemId(),$upload->getFileName(),$upload->getFileHash(),$upload->getCompletedChunks(),$upload->getTotalChunks());
+      $uploadArr[] = [
+        "id"=>$upload->getItemId(),
+        "file_name"=>$upload->getFileName(),
+        "file_hash"=>$upload->getFileHash(),
+        "chunks_completed"=>$upload->getCompletedChunks(),
+        "chunks_total"=>$upload->getTotalChunks(),
+      ];
     }
     return $uploadArr;
   }
